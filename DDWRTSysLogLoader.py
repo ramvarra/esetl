@@ -7,6 +7,7 @@ import elasticsearch
 import datetime
 import GeoIP
 import geoip2.database
+import ipaddress
 
 
 #---------------------------------------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ class ServerHelper:
     def geo_ip(self, ip):
         r = {}
 
-        if ip.startswith('192.168.') or ip.startswith('10.'):
+        if ip.startswith('192.168.') or ip.startswith('10.') or ipaddress.ip_address(ip).is_private:
             return r
 
         try:
