@@ -153,9 +153,8 @@ class IISLogReader:
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-    log_file =  r'N:\TEMP\LOGS\{}.log'.format(os.path.splitext(os.path.basename(sys.argv[0]))[0])
-    print('Logging to: {}'.format(log_file))
-    rv.misc.set_logging(log_file)
+    LOG_DIR =  r'N:\TEMP\LOGS'
+    rv.misc.set_logging(LOG_DIR)
 
     lnr = IISLogReader()
     if len(sys.argv) > 1:
