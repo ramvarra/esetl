@@ -112,16 +112,17 @@ class SyslogReceiver(socketserver.BaseRequestHandler):
 if __name__ == '__main__':
     HOST, PORT = platform.node(), 514
     LOG_DIR = '/var/log/esetl'
-    log_file = os.path.join(LOG_DIR, os.path.splitext(os.path.basename(sys.argv[0]))[0] + '.log')
+    rv.misc.set_logging(LOG_DIR)
 
-    rv.misc.set_logging(log_file)
+    try:
+        server_helper = ServerHelper()
+        if len(sys.argv) == 2:
+            assert sys.argv[1] == 'initialize_template', "Usage: {} [initialize_template]".format(os.path.basename(sys.argv[0]))
+            server_helper.create_templates()
+            sys.exit(1)
 
-    server_helper = ServerHelper()
-    if len(sys.argv) == 2:
-        assert sys.argv[1] == 'initialize_template', "Usage: {} [initialize_template]".format(os.path.basename(sys.argv[0]))
-        server_helper.create_templates()
-        sys.exit(1)
-
-    with socketserver.UDPServer((HOST, PORT), SyslogReceiver) as server:
-        logging.info('Running on {}'.format((HOST, PORT)))
-        server.serve_forever()
+        with socketserver.UDPServer((HOST, PORT), SyslogReceiver) as server:
+            logging.info('Running on {}'.format((HOST, PORT)))
+            server.serve_forever()
+    except Exception as ex:
+        logging.exception("Server Failed with Exception")
