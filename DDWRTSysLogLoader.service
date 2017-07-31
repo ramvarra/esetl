@@ -1,0 +1,15 @@
+[Unit]
+Description=DDWRTSysLogLoader
+After=elasticsearch.target 
+
+[Service]
+Type=idle
+User=root
+Group=root
+Environment=PYTHONPATH=/usr/local/lib/PythonLib
+WorkingDirectory=/mnt/homefiler/esetl
+ExecStart=/usr/local/anaconda3/bin/python /mnt/homefiler/esetl/DDWRTSysLogLoader.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
