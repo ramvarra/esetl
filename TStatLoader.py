@@ -63,7 +63,7 @@ class TStatLoader:
 
     # ------------------------------------------------------------------------------------------------------------------
     def get_tstat_recs(self):
-        w = self.get_weather()
+        w = {'owm_'+k: v for k,v in self.get_weather().items()}
         recs = []
         for name, ip in self.TSTATS.items():
             th = radiotherm.get_thermostat(ip)
