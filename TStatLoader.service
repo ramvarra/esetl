@@ -1,0 +1,14 @@
+[Unit]
+Description=TStatLoader
+After=elasticsearch.target 
+
+[Service]
+Type=idle
+User=root
+Group=root
+WorkingDirectory=/mnt/homefiler/esetl
+ExecStart=/mnt/homefiler/esetl/RunTstatLoader.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
