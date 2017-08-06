@@ -9,6 +9,7 @@ import datetime
 import ipaddress
 import platform
 import logging
+import socket
 
 import rv.misc
 import rv.geoip
@@ -16,18 +17,20 @@ import rv.ESUtil
 
 #---------------------------------------------------------------------------------------------------------------
 class ServerHelper:
-    ES_HOST_CONFIG = dict(hosts=['http://192.168.1.141:9200'], timeout=240)
+    ES_CONFIG = dict(hosts='http://192.168.1.141:9200', timeout=240)
 
+    OPTS = ['SYN', 'ACK', 'CODE', 'FIN', 'RST', 'SRC', 'DST', 'SPT', 'DPT', 'MAC', 'TOS', 'TTL', 'TYPE', 'WINDOW', 'LEN',
+            'ECE', 'ID', 'IN', 'MARK', 'OUT', 'OPT', 'PREC', 'PROTO', 'SEQ', 'URG', 'URGP',]
     #--------------------------------------------------------------------------------------
     def __init__(self):
         self.pat1 = re.compile(r"<4>(?P<dt>\w+\s+\d+\s+\d+:\d+:\d+)\s+kernel:\s+(?P<action>[A-Z]+)\s+(?P<opts>.*)")
         self.pat2 = r'<(?P<code>\d+)>(?P<dt>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<fac>[^:]+):\s+(?P<rest>.*)'
         self.local_tz = tzlocal.get_localzone()
-        self.esu = rv.ESUtil.ESUtil(**self.ES_HOST_CONFIG)
+        self.esu = rv.ESUtil.ESUtil(**self.ES_CONFIG)
         self.es = self.esu._es
         self.geoip = rv.geoip.GeoIP()
 
-        logging.info("Connecting to Elasticsearch: {}".format(self.ES_HOST_CONFIG['hosts']))
+        logging.info("Connecting to Elasticsearch: {}".format(self.ES_CONFIG))
 
     # -------------------------------------------------------------------------------------------------------------------
     def create_templates(self):
@@ -78,14 +81,21 @@ class SyslogReceiver(socketserver.BaseRequestHandler):
             ts = server_helper.get_ts(m.group('dt'))
             action = m.group('action')
             d = {'TS': ts, 'ACTION': action}
+            flags = []
+            #logging.info('OPTS = {}'.format(m.group('opts')))
             for opt in m.group('opts').split():
-                if '=' not in opt:
-                    opt += '=Y'
-                k, v = opt.split('=')
-                d[k] = v
+                k, v = opt.split('=') if '=' in opt else (opt, '')
+                if k in server_helper.OPTS:
+                    d[k] = v if v else 'Y'
+                else:
+                    flags.append((k, v))
+
+            d['FLAGS'] = ' '.join('{}{}{}'.format(f, '=' if v else '', v) for f,v in flags)
+
             for c in ('SRC', 'DST'):
-                gip = server_helper.geoip.lookup(d[c])
-                d.update({"{}_{}".format(c, k): v for k, v in gip.items()})
+                if c in d:
+                    gip = server_helper.geoip.lookup(d[c])
+                    d.update({"{}_{}".format(c, k.upper()): v for k, v in gip.items()})
 
             #logging.info("Writing {}".format(d))
             server_helper.index('routerlog', d)

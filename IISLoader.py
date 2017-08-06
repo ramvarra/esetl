@@ -13,7 +13,7 @@ import rv.ESUtil
 
 class IISLogReader:
     COLFMT = 's-ip cs-method cs-uri-stem cs-uri-query s-port cs-username c-ip cs(User-Agent) cs(Referer) sc-status sc-substatus sc-win32-status time-taken'
-    ES_CONFIG = {'hosts': 'http://UBU01.ramvarra.com:9200', 'timeout': 240}
+    ES_CONFIG = dict(hosts='http://192.168.1.141:9200', timeout=240)
     INDEX_PREFIX = 'iislog'
     IIS_LOG_DIR = r'C:\inetpub\logs\LogFiles\W3SVC1'
 
