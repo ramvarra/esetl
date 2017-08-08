@@ -1,0 +1,14 @@
+[Unit]
+Description=Cerebro
+After=elasticsearch.target 
+
+[Service]
+Type=idle
+User=root
+Group=root
+WorkingDirectory=/usr/local/cerebro/bin
+ExecStart=/usr/local/cerebro/bin/cerebro
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

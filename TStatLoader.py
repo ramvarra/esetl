@@ -22,7 +22,7 @@ class TStatLoader:
     def __init__(self):
         self.local_tz = tzlocal.get_localzone()
         self.esu = rv.ESUtil.ESUtil(**self.ES_CONFIG)
-        self.index_time_pattern = self.INDEX_PREFIX + '-%Y.%w'
+        self.index_time_pattern = self.INDEX_PREFIX + '-%Y.%W'
         self.index_pattern = self.INDEX_PREFIX + '-*'
         self.total_count = 0
 
