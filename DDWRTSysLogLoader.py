@@ -17,7 +17,7 @@ import rv.ESUtil
 
 #---------------------------------------------------------------------------------------------------------------
 class ServerHelper:
-    ES_CONFIG = dict(hosts='http://192.168.1.141:9200', timeout=240)
+    ES_CONFIG = dict(hosts='http://localhost:9200', timeout=240)
 
     OPTS = ['SYN', 'ACK', 'CODE', 'FIN', 'RST', 'SRC', 'DST', 'SPT', 'DPT', 'MAC', 'TOS', 'TTL', 'TYPE', 'WINDOW', 'LEN',
             'ECE', 'ID', 'IN', 'MARK', 'OUT', 'OPT', 'PREC', 'PROTO', 'SEQ', 'URG', 'URGP',]

@@ -11,7 +11,7 @@ import rv.ESUtil
 
 # ----------------------------------------------------------------------------------------------------------------------
 class TStatLoader:
-    ES_CONFIG = dict(hosts='http://192.168.1.141:9200', timeout=240)
+    ES_CONFIG = dict(hosts='http://localhost:9200', timeout=240)
     INDEX_PREFIX = 'tstat'
     TSTATS = {
         'UP': '192.168.1.132',
